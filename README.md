@@ -16,8 +16,8 @@ If this doesn't work for you, or you want to build the latest and greatest, foll
 This does require that you have XCode or the XCode Command Line Tools installed.  See the App Store application or https://developer.apple.com to install these if necessary.
 
 ~~~bash
-$ git clone https://github.com/asmagill/hammerspoon_asm.undocumented undocumented
-$ cd undocumented/spaces
+$ git clone https://github.com/asmagill/hs._asm.undocumented.spaces spaces
+$ cd spaces
 $ [HS_APPLICATION=/Applications] [PREFIX=~/.hammerspoon] make install
 ~~~
 

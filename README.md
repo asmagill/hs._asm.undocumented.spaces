@@ -23,6 +23,8 @@ $ [HS_APPLICATION=/Applications] [PREFIX=~/.hammerspoon] make install
 
 If Hammerspoon.app is in your /Applications folder, you may leave `HS_APPLICATION=/Applications` out and if you are fine with the module being installed in your Hammerspoon configuration directory, you may leave `PREFIX=~/.hammerspoon` out as well.  For most people, it will probably be sufficient to just type `make install`.
 
+In either case, if you are upgrading over a previous installation of this module, you must completely quit and restart Hammerspoon before the new version will be fully recognized.
+
 ### Require
 
 ~~~lua

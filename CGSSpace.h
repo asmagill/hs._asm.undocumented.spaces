@@ -148,9 +148,6 @@ CG_EXTERN void CGSManagedDisplaySetCurrentSpace(CGSConnectionID cid, CFStringRef
 
 #pragma mark - Additional Functions from https://gist.github.com/puffnfresh/4053980
 
-extern CGSConnectionID _CGSDefaultConnection(void);
-#define CGSDefaultConnection _CGSDefaultConnection()
-
 CG_EXTERN int CGSSpaceGetAbsoluteLevel(const CGSConnectionID cid, CGSSpaceID space);
 CG_EXTERN void CGSSpaceSetAbsoluteLevel(const CGSConnectionID cid, CGSSpaceID space, int level);
 

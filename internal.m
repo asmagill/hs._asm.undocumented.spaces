@@ -4,6 +4,9 @@
 // #import "spaces.h"
 #import "CGSSpace.h"
 
+extern CGSConnectionID _CGSDefaultConnection(void);
+#define CGSDefaultConnection _CGSDefaultConnection()
+
 int refTable ;
 
 #pragma mark - Support Functions

@@ -9,13 +9,18 @@ I make no promises that these will work for you or work at all with any, past, c
 
 ### Installation
 
-An early release version of just this module is included in the repository as the file `spaces.tar.gz` file in the spaces subdirectory.  You can install it by downloading the file and expanding it in your `~/.hammerspoon/` directory with `tar -xzf spaces.tar.gz`.
+Compiled versions of this module can be found in the releases.  You can download the release and install it by expanding it in your `~/.hammerspoon/` directory (or any other directory in your `package.path` and `package.cpath` search paths):
+
+~~~sh
+cd ~/.hammerspoon
+tar -xzf ~/Downloads/spaces-vX.Y.tar.gz # or wherever your downloads are saved
+~~~
 
 If this doesn't work for you, or you want to build the latest and greatest, follow the directions below:
 
 This does require that you have XCode or the XCode Command Line Tools installed.  See the App Store application or https://developer.apple.com to install these if necessary.
 
-~~~bash
+~~~sh
 $ git clone https://github.com/asmagill/hs._asm.undocumented.spaces spaces
 $ cd spaces
 $ [HS_APPLICATION=/Applications] [PREFIX=~/.hammerspoon] make install
@@ -30,6 +35,8 @@ In either case, if you are upgrading over a previous installation of this module
 ~~~lua
 spaces = require("hs._asm.undocumented.spaces")
 ~~~
+
+- - -
 
 ### Module Functions
 
@@ -116,6 +123,21 @@ Notes:
  * This function can be used in `hs.eventtap` based space changing functions to determine when to release the mouse and key events.
  * This function is also added to the `hs.screen` object metatable so that you can check a specific screen's animation status with `hs.screen:spacesAnimating()`.
 
+- - -
+
+~~~lua
+spaces.layout() -> table
+~~~
+Returns a table of the user accessible spaces for, separated by Screen (Display), in order.
+
+Parameters:
+ * None
+
+Returns:
+ * a table whose keys are the screenUUID of the available screens.  Each key's value is an array of the spaces on that display, list in the order in which they are currently arranged.
+
+Notes:
+ * to determine which spaces are currently visible on each screen, use `hs._asm.undocumented.spaces.query(hs._asm.undocumented.spaces.masks.currentSpaces)`.
 - - -
 
 ~~~lua
@@ -288,6 +310,8 @@ Notes:
 
 ### Module Constants
 
+- - -
+
 ~~~lua
 spaces.masks
 ~~~
@@ -353,6 +377,8 @@ hs.window:spacesMoveTo(spaceID) -> windowObject
 ~~~
 A Convienence method using `hs._asm.spaces.moveWindowToSpace` added to the `hs.window` object metatable to move the window specified by the `hs.window` object to the specified space.
 
+* * *
+
 ### Sub-Modules
 
 #### `spaces.debug`
@@ -360,6 +386,8 @@ A Convienence method using `hs._asm.spaces.moveWindowToSpace` added to the `hs.w
 This sub module contains functions which report a lot of detail about the spaces on your system.  It is probably not that useful in a production environment, but may be helpfull when trying to extend this module or troubleshooting when things don't work.
 
 If you do submit an issue to this repository, I may ask for information provided by one or more of these functions.  Feel free to review the output and replace anything you think might be sensitive such as file paths or usernames with something like `*********`.
+
+- - -
 
 ~~~lua
 spaces.debug.layout() -> string

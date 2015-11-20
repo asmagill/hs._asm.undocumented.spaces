@@ -36,9 +36,9 @@ In either case, if you are upgrading over a previous installation of this module
 spaces = require("hs._asm.undocumented.spaces")
 ~~~
 
-- - -
-
 ### Module Functions
+
+- - -
 
 ~~~lua
 spaces.activeSpace() -> spaceID

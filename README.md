@@ -437,7 +437,7 @@ Returns:
 
 The functions described thus far in this document include protections to hopefully prevent anything unexpected or unstable from occuring.  The raw submodule provides direct access to the internal functions and should probably not be used unless you are working to extend this module.  Inclusion of these functions is disabled by default.
 
-Documentation on these additional functions will be forthcoming.
+Documentation on these additional functions can be found in the `RawAccess.md` file.
 
 * * *
 

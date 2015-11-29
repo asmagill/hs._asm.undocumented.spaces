@@ -94,13 +94,13 @@ static int changeToSpace(lua_State *L) {
 }
 
 static int disableUpdates(__unused lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TBOOLEAN | LS_TOPTIONAL, LS_TBREAK] ;
+    [[LuaSkin shared] checkArgs:LS_TBREAK] ;
     NSDisableScreenUpdates() ;
     return 0 ;
 }
 
 static int enableUpdates(__unused lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TBOOLEAN | LS_TOPTIONAL, LS_TBREAK] ;
+    [[LuaSkin shared] checkArgs:LS_TBREAK] ;
     NSEnableScreenUpdates() ;
     return 0 ;
 }

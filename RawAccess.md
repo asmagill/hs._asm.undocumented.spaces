@@ -9,7 +9,32 @@ In my experimentation, I was always able to return to a usable state by the foll
 1. Change to another space by one of the "normal" methods (either the keyboard shortcuts, CTRL-#, or trackpad gestures.)
 2. `hs.execute('killall Dock')`
 
-If that wasn't sufficient, logging out and/or rebooting the computer.
+You can also add the following to your `init.lua` file as a "safety" reset, which seems to work well for me if you can get to the console or a terminal and use the `hs` command... it basically picks an arbitrary space for each monitor, shows it, hides the others, resets all transforms, and restarts the Dock.
+
+~~~lua
+resetSpaces = function()
+    local s = require("hs._asm.undocumented.spaces")
+    -- bypass check for raw function access
+    local si = require("hs._asm.undocumented.spaces.internal")
+    for k,v in pairs(s.spacesByScreenUUID()) do
+        local first = true
+        for a,b in ipairs(v) do
+            if first and si.spaceType(b) == s.types.user then
+                si.showSpaces(b)
+                si._changeToSpace(b)
+                first = false
+            else
+                si.hideSpaces(b)
+            end
+            si.spaceTransform(b, nil)
+        end
+        si.setScreenUUIDisAnimating(k, false)
+    end
+    hs.execute("killall Dock")
+end
+~~~
+
+If that wasn't sufficient, logging out and/or rebooting the computer always work.
 
 As freaky and odd as some of the results of these functions are, I decided to include them, rather than leave them solely in the Objective-C portion of the module or undefined at all because I believe in experimentation, and because they suggest some interesting possibilities, such as translating spaces in odd ways (rotation, inversion, etc.) and rendering multiple spaces on the screen at the same time (e.g. replicating *Mission Control*).
 
@@ -124,7 +149,14 @@ spaces.raw.screenUUIDisAnimating(screenUUID) -> boolean
 ~~~
 Returns whether the display specified by the given screenUUID is currently undergoing space-change animation.  Because this will crash Hammerspoon if an incorrect UUID is provided, it does check to make sure that the UUID is valid first.
 
-The API also provides a function for setting the animation flag to true or false, but it has not been implemented in this module at present.  It would not be difficult to do so, but I've seen no reason at present.
+- - -
+
+~~~lua
+spaces.raw.setScreenUUIDisAnimating(screenUUID, flag) -> boolean
+~~~
+Sets the flag indicating whether or not the specified screen is currently animating.  No check is done on whether or not animation is really occurring, so this is primarily so you can "play nice" and "do the right thing" when writing your own animation sequences with `spaces.raw.spaceTransform` and the like.
+
+Returns whether the display specified by the given screenUUID is currently undergoing space-change animation so you can verify (if desired) that the flag change has taken effect.
 
 - - -
 
@@ -216,7 +248,7 @@ To set the table's transform, provide the 6 elements require for CGAffineTransfo
     [ c  d  0 ]
     [ tx ty 1 ]
 
-You can resize, move, and rotate a space by using the appropriate Matrix transformation algorithms on these values.  A discussion of this is outside the scope of this document.
+You can resize, move, and rotate a space by using the appropriate Matrix transformation algorithms on these values.  A discussion of this is outside the scope of this document.  Check out Google and Apple's documentation at https://developer.apple.com/library/mac/documentation/GraphicsImaging/Reference/CGAffineTransform/, especially the section about [the CGAffineTransform data type](https://developer.apple.com/library/mac/documentation/GraphicsImaging/Reference/CGAffineTransform/#//apple_ref/c/tdef/CGAffineTransform).
 
 - - -
 

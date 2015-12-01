@@ -226,6 +226,21 @@ static int screenUUIDisAnimating(lua_State *L) {
     return 1 ;
 }
 
+static int setScreenUUIDisAnimating(lua_State *L) {
+    [[LuaSkin shared] checkArgs:LS_TSTRING, LS_TBOOLEAN, LS_TBREAK] ;
+    NSString *theDisplay = [[LuaSkin shared] toNSObjectAtIndex:1] ;
+    BOOL isValid = isScreenUUIDValid(theDisplay) ;
+
+    if (isValid) {
+        CGSManagedDisplaySetIsAnimating(CGSDefaultConnection, (__bridge CFStringRef)theDisplay, lua_toboolean(L, 2)) ;
+
+        lua_pushboolean(L, CGSManagedDisplayIsAnimating(CGSDefaultConnection, (__bridge CFStringRef)theDisplay)) ;
+    } else {
+        luaL_error(L, "setScreenUUIDisAnimating: invalid screen UUID") ;
+    }
+    return 1 ;
+}
+
 static int mainScreenUUID(__unused lua_State *L) {
     [[LuaSkin shared] checkArgs:LS_TBREAK] ;
     [[LuaSkin shared] pushNSObject:(__bridge NSString *) kCGSPackagesMainDisplayIdentifier] ;
@@ -380,6 +395,7 @@ static luaL_Reg moduleLib[] = {
     {"mainScreenUUID",            mainScreenUUID},
     {"UUIDforScreen",             screenUUID},
     {"screenUUIDisAnimating",     screenUUIDisAnimating},
+    {"setScreenUUIDisAnimating",  setScreenUUIDisAnimating},
 
     {"showSpaces",                showSpaces},
     {"hideSpaces",                hideSpaces},

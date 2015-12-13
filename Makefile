@@ -30,7 +30,7 @@ LDFLAGS += -dynamiclib -undefined dynamic_lookup $(EXTRA_LDFLAGS)
 
 DOC_SOURCES = $(LUAFILE) $(OBJCFILE)
 
-all: verify $(SOFILE)
+all: $(SOFILE)
 
 .m.so: $(HEADERS)
 	$(CC) $< $(CFLAGS) $(LDFLAGS) -o $@

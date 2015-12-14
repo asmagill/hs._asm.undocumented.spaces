@@ -292,7 +292,7 @@ module.removeSpace = function(...)
         _BE_DANGEROUS_FLAG_ = _Are_We_Being_Dangerous_
         -- check for windows which need to be moved
         local theWindows = {}
-        for i, v in ipairs(module.allWindowsForSpace(spaceID)) do table.insert(theWindows, v:id()) end
+        for i, v in ipairs(module.allWindowsForSpace(spaceID)) do if v:id() then table.insert(theWindows, v:id()) end end
 
         -- get id of screen to move them to
         local baseID = 0
@@ -368,9 +368,11 @@ module.allWindowsForSpace = function(...)
         end
         local realWindowIDs = {}
         for i,v in ipairs(windowIDs) do
-            for j,k in ipairs(internal.windowsOnSpaces(v:id())) do
-                if k == spaceID then
-                    table.insert(realWindowIDs, v)
+            if v:id() then
+                for j,k in ipairs(internal.windowsOnSpaces(v:id())) do
+                    if k == spaceID then
+                        table.insert(realWindowIDs, v)
+                    end
                 end
             end
         end
@@ -519,10 +521,13 @@ screenMT.__index.spaces          = function(obj) return module.spacesByScreenUUI
 screenMT.__index.spacesUUID      = internal.UUIDforScreen
 screenMT.__index.spacesAnimating = function(obj) return internal.screenUUIDisAnimating(internal.UUIDforScreen(obj)) end
 
-windowMT.__index.spaces          = function(obj) return internal.windowsOnSpaces(obj:id()) end
+windowMT.__index.spaces          = function(obj) return obj:id() and internal.windowsOnSpaces(obj:id()) or nil end
 windowMT.__index.spacesMoveTo    = function(obj, ...)
-    module.moveWindowToSpace(obj:id(), ...)
-    return obj
+    if obj:id() then
+        module.moveWindowToSpace(obj:id(), ...)
+        return obj
+    end
+    return nil
 end
 
 -- add raw subtable if the user has enabled it

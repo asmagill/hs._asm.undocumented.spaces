@@ -16,12 +16,14 @@ BOOL isScreenUUIDValid(NSString *theDisplay) {
     for (NSScreen *screen in [NSScreen screens]) {
         CGDirectDisplayID cgID = [[[screen deviceDescription] objectForKey:@"NSScreenNumber"] unsignedIntValue] ;
         CFUUIDRef   theUUID    = CGDisplayCreateUUIDFromDisplayID(cgID) ;
-        CFStringRef UUIDString = CFUUIDCreateString(kCFAllocatorDefault, theUUID) ;
-        if (CFStringCompare((__bridge CFStringRef)theDisplay, UUIDString, kCFCompareCaseInsensitive) == kCFCompareEqualTo)
-            isValid = YES ;
-        CFRelease(UUIDString) ;
-        CFRelease(theUUID) ;
-        if (isValid) break ;
+        if (theUUID) {
+            CFStringRef UUIDString = CFUUIDCreateString(kCFAllocatorDefault, theUUID) ;
+            if (CFStringCompare((__bridge CFStringRef)theDisplay, UUIDString, kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+                isValid = YES ;
+            CFRelease(UUIDString) ;
+            CFRelease(theUUID) ;
+            if (isValid) break ;
+        }
     }
     return isValid ;
 }
@@ -128,8 +130,13 @@ static int screenUUID(lua_State *L) {
     NSScreen *screen = (__bridge NSScreen*)*((void**)luaL_checkudata(L, 1, "hs.screen")) ;
     CGDirectDisplayID cgID = [[[screen deviceDescription] objectForKey:@"NSScreenNumber"] unsignedIntValue] ;
     CFUUIDRef   theUUID    = CGDisplayCreateUUIDFromDisplayID(cgID) ;
-    CFStringRef UUIDString = CFUUIDCreateString(kCFAllocatorDefault, theUUID) ;
-    [[LuaSkin shared] pushNSObject:(__bridge_transfer NSString *)UUIDString] ;
+    if (theUUID) {
+        CFStringRef UUIDString = CFUUIDCreateString(kCFAllocatorDefault, theUUID) ;
+        [[LuaSkin shared] pushNSObject:(__bridge_transfer NSString *)UUIDString] ;
+        CFRelease(theUUID) ;
+    } else {
+        lua_pushnil(L) ;
+    }
     return 1 ;
 }
 

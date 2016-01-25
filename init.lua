@@ -417,9 +417,13 @@ end
 module.layout = function()
     local results = {}
     for i,v in ipairs(internal.details()) do
-        results[v["Display Identifier"]] = {}
+        local screenID = v["Display Identifier"]
+        if screenID == "Main" then
+            screenID = module.mainScreenUUID()
+        end
+        results[screenID] = {}
         for j,k in ipairs(v.Spaces) do
-            table.insert(results[v["Display Identifier"]], k.ManagedSpaceID)
+            table.insert(results[screenID], k.ManagedSpaceID)
         end
     end
     return results

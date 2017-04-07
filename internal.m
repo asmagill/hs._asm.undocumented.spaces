@@ -1,13 +1,11 @@
-#import <Cocoa/Cocoa.h>
-// #import <Carbon/Carbon.h>
-#import <LuaSkin/LuaSkin.h>
-// #import "spaces.h"
+@import Cocoa ;
+@import LuaSkin ;
 #import "CGSSpace.h"
 
 extern CGSConnectionID _CGSDefaultConnection(void);
 #define CGSDefaultConnection _CGSDefaultConnection()
 
-int refTable ;
+static int refTable ;
 
 #pragma mark - Support Functions
 
@@ -202,7 +200,7 @@ static int activeSpace(lua_State* L) {
 
 static int querySpaces(lua_State *L) {
     [[LuaSkin shared] checkArgs:LS_TNUMBER, LS_TBREAK] ;
-    CFArrayRef CGspaces = CGSCopySpaces(CGSDefaultConnection, (CGSSpaceMask)lua_tointeger(L, 1));
+    CFArrayRef CGspaces = CGSCopySpaces(CGSDefaultConnection, (CGSSpaceMask)(lua_tointeger(L, 1)));
     [[LuaSkin shared] pushNSObject:(__bridge_transfer NSArray *)CGspaces] ;
     return 1 ;
 }
@@ -422,7 +420,7 @@ static luaL_Reg moduleLib[] = {
     {NULL, NULL},
 };
 
-int luaopen_hs__asm_undocumented_spaces_internal(__unused lua_State* L) {
+int luaopen_hs__asm_undocumented_spaces_internal(lua_State* L) {
     refTable = [[LuaSkin shared] registerLibrary:moduleLib metaFunctions:nil] ;
 
     spacesMasksTable(L) ; lua_setfield(L, -2, "masks") ;

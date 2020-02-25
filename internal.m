@@ -12,7 +12,8 @@ static int refTable ;
 BOOL isScreenUUIDValid(NSString *theDisplay) {
     BOOL isValid = NO ;
     for (NSScreen *screen in [NSScreen screens]) {
-        CGDirectDisplayID cgID = [[[screen deviceDescription] objectForKey:@"NSScreenNumber"] unsignedIntValue] ;
+        NSNumber *screenNumber = [[screen deviceDescription] objectForKey:@"NSScreenNumber"] ;
+        CGDirectDisplayID cgID = screenNumber.unsignedIntValue ;
         CFUUIDRef   theUUID    = CGDisplayCreateUUIDFromDisplayID(cgID) ;
         if (theUUID) {
             CFStringRef UUIDString = CFUUIDCreateString(kCFAllocatorDefault, theUUID) ;
@@ -83,7 +84,8 @@ static int CGSRegionRefToLua(lua_State *L, CGSRegionRef theRegion) {
 #pragma mark - Module Functions
 
 static int changeToSpace(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TNUMBER, LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TNUMBER, LS_TBREAK] ;
 // Moved to lua for more flexibility
 //     CGSHideSpaces(CGSDefaultConnection, (__bridge CFArrayRef)(@[@(CGSGetActiveSpace(CGSDefaultConnection))]));
 //     CGSShowSpaces(CGSDefaultConnection, (__bridge CFArrayRef)(@[@(luaL_checkinteger(L, 1))]));
@@ -93,15 +95,23 @@ static int changeToSpace(lua_State *L) {
     return 0 ;
 }
 
-static int disableUpdates(__unused lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TBREAK] ;
+static int disableUpdates(lua_State *L) {
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TBREAK] ;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSDisableScreenUpdates() ;
+#pragma clang diagnostic pop
     return 0 ;
 }
 
-static int enableUpdates(__unused lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TBREAK] ;
+static int enableUpdates(lua_State *L) {
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TBREAK] ;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSEnableScreenUpdates() ;
+#pragma clang diagnostic pop
     return 0 ;
 }
 
@@ -118,19 +128,22 @@ static int enableUpdates(__unused lua_State *L) {
 /// Notes:
 ///  * This function uses standard OS X APIs and is not likely to be affected by updates or patches.
 static int screensHaveSeparateSpaces(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TBREAK] ;
     lua_pushboolean(L, [NSScreen screensHaveSeparateSpaces]) ;
     return 1 ;
 }
 
 static int screenUUID(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TUSERDATA, "hs.screen", LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TUSERDATA, "hs.screen", LS_TBREAK] ;
     NSScreen *screen = (__bridge NSScreen*)*((void**)luaL_checkudata(L, 1, "hs.screen")) ;
-    CGDirectDisplayID cgID = [[[screen deviceDescription] objectForKey:@"NSScreenNumber"] unsignedIntValue] ;
+    NSNumber *screenNumber = [[screen deviceDescription] objectForKey:@"NSScreenNumber"] ;
+    CGDirectDisplayID cgID = screenNumber.unsignedIntValue ;
     CFUUIDRef   theUUID    = CGDisplayCreateUUIDFromDisplayID(cgID) ;
     if (theUUID) {
         CFStringRef UUIDString = CFUUIDCreateString(kCFAllocatorDefault, theUUID) ;
-        [[LuaSkin shared] pushNSObject:(__bridge_transfer NSString *)UUIDString] ;
+        [skin pushNSObject:(__bridge_transfer NSString *)UUIDString] ;
         CFRelease(theUUID) ;
     } else {
         lua_pushnil(L) ;
@@ -139,29 +152,33 @@ static int screenUUID(lua_State *L) {
 }
 
 static int spaceOwners(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TNUMBER, LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TNUMBER, LS_TBREAK] ;
     CFArrayRef CGspaceOwners = CGSSpaceCopyOwners(CGSDefaultConnection, (CGSSpaceID)lua_tointeger(L, 1));
-    [[LuaSkin shared] pushNSObject:(__bridge_transfer NSArray *)CGspaceOwners] ;
+    [skin pushNSObject:(__bridge_transfer NSArray *)CGspaceOwners] ;
     return 1 ;
 }
 
 static int spaceType(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TNUMBER, LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TNUMBER, LS_TBREAK] ;
     lua_pushinteger(L, CGSSpaceGetType(CGSDefaultConnection, (CGSSpaceID)lua_tointeger(L, 1))) ;
     return 1 ;
 }
 
 static int spaceName(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TNUMBER, LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TNUMBER, LS_TBREAK] ;
     CFStringRef CGname = CGSSpaceCopyName(CGSDefaultConnection, (CGSSpaceID)lua_tointeger(L, 1));
-    [[LuaSkin shared] pushNSObject:(__bridge_transfer NSString *)CGname] ;
+    [skin pushNSObject:(__bridge_transfer NSString *)CGname] ;
     return 1 ;
 }
 
 static int spaceValues(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TNUMBER, LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TNUMBER, LS_TBREAK] ;
     CFDictionaryRef CGspaceValues = CGSSpaceCopyValues(CGSDefaultConnection, (CGSSpaceID)lua_tointeger(L, 1));
-    [[LuaSkin shared] pushNSObject:(__bridge_transfer NSDictionary *)CGspaceValues] ;
+    [skin pushNSObject:(__bridge_transfer NSDictionary *)CGspaceValues] ;
     return 1 ;
 }
 
@@ -193,35 +210,40 @@ static int spacesTypesTable(lua_State *L) {
 }
 
 static int activeSpace(lua_State* L) {
-    [[LuaSkin shared] checkArgs:LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TBREAK] ;
     lua_pushinteger(L, (lua_Integer)CGSGetActiveSpace(CGSDefaultConnection)) ;
     return 1 ;
 }
 
 static int querySpaces(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TNUMBER, LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TNUMBER, LS_TBREAK] ;
     CFArrayRef CGspaces = CGSCopySpaces(CGSDefaultConnection, (CGSSpaceMask)(lua_tointeger(L, 1)));
-    [[LuaSkin shared] pushNSObject:(__bridge_transfer NSArray *)CGspaces] ;
+    [skin pushNSObject:(__bridge_transfer NSArray *)CGspaces] ;
     return 1 ;
 }
 
-static int fullDetails(__unused lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TBREAK] ;
+static int fullDetails(lua_State *L) {
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TBREAK] ;
     CFArrayRef CGmanagedDisplaySpaces = CGSCopyManagedDisplaySpaces(CGSDefaultConnection);
-    [[LuaSkin shared] pushNSObject:(__bridge_transfer NSArray *)CGmanagedDisplaySpaces] ;
+    [skin pushNSObject:(__bridge_transfer NSArray *)CGmanagedDisplaySpaces] ;
     return 1 ;
 }
 
 static int spaceScreenUUID(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TNUMBER, LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TNUMBER, LS_TBREAK] ;
     CFStringRef display = CGSCopyManagedDisplayForSpace(CGSDefaultConnection, (CGSSpaceID)lua_tointeger(L, 1));
-    [[LuaSkin shared] pushNSObject:(__bridge_transfer NSArray *)display] ;
+    [skin pushNSObject:(__bridge_transfer NSArray *)display] ;
     return 1 ;
 }
 
 static int screenUUIDisAnimating(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TSTRING, LS_TBREAK] ;
-    NSString *theDisplay = [[LuaSkin shared] toNSObjectAtIndex:1] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TSTRING, LS_TBREAK] ;
+    NSString *theDisplay = [skin toNSObjectAtIndex:1] ;
     BOOL isValid = isScreenUUIDValid(theDisplay) ;
 
     if (isValid)
@@ -232,8 +254,9 @@ static int screenUUIDisAnimating(lua_State *L) {
 }
 
 static int setScreenUUIDisAnimating(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TSTRING, LS_TBOOLEAN, LS_TBREAK] ;
-    NSString *theDisplay = [[LuaSkin shared] toNSObjectAtIndex:1] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TSTRING, LS_TBOOLEAN, LS_TBREAK] ;
+    NSString *theDisplay = [skin toNSObjectAtIndex:1] ;
     BOOL isValid = isScreenUUIDValid(theDisplay) ;
 
     if (isValid) {
@@ -246,14 +269,16 @@ static int setScreenUUIDisAnimating(lua_State *L) {
     return 1 ;
 }
 
-static int mainScreenUUID(__unused lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TBREAK] ;
-    [[LuaSkin shared] pushNSObject:(__bridge NSString *) kCGSPackagesMainDisplayIdentifier] ;
+static int mainScreenUUID(lua_State *L) {
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TBREAK] ;
+    [skin pushNSObject:(__bridge NSString *) kCGSPackagesMainDisplayIdentifier] ;
     return 1 ;
 }
 
 static int spaceLevel(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TNUMBER, LS_TNUMBER | LS_TOPTIONAL, LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TNUMBER, LS_TNUMBER | LS_TOPTIONAL, LS_TBREAK] ;
 
     if (lua_type(L, 2) != LUA_TNONE) {
         CGSSpaceSetAbsoluteLevel(CGSDefaultConnection, (CGSSpaceID)lua_tointeger(L, 1), (int)lua_tointeger(L, 2)) ;
@@ -264,15 +289,15 @@ static int spaceLevel(lua_State *L) {
 }
 
 static int spaceCompatID(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TNUMBER, LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TNUMBER, LS_TBREAK] ;
     lua_pushinteger(L, CGSSpaceGetCompatID(CGSDefaultConnection, (CGSSpaceID)lua_tointeger(L, 1))) ;
     return 1 ;
 }
 
 static int spaceTransform(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TNUMBER,
-                                LS_TTABLE | LS_TNIL | LS_TOPTIONAL,
-                                LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TNUMBER, LS_TTABLE | LS_TNIL | LS_TOPTIONAL, LS_TBREAK] ;
 
     if (lua_type(L, 2) != LUA_TNONE) {
         CGAffineTransform trans = CGAffineTransformMakeScale(1, 1) ;
@@ -301,23 +326,26 @@ static int spaceTransform(lua_State *L) {
 }
 
 static int showSpaces(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TNUMBER | LS_TTABLE, LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TNUMBER | LS_TTABLE, LS_TBREAK] ;
     NSArray *theSpaces = getArrayFromNumberOrArray(L, 1) ;
     CGSShowSpaces(CGSDefaultConnection, (__bridge CFArrayRef)theSpaces) ;
     return 0 ;
 }
 
 static int hideSpaces(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TNUMBER | LS_TTABLE, LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TNUMBER | LS_TTABLE, LS_TBREAK] ;
     NSArray *theSpaces = getArrayFromNumberOrArray(L, 1) ;
     CGSHideSpaces(CGSDefaultConnection, (__bridge CFArrayRef)theSpaces) ;
     return 0 ;
 }
 
 static int createSpace(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TSTRING, LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TSTRING, LS_TBREAK] ;
     NSDictionary *stuff = @{@"type":@(kCGSSpaceUser), @"uuid":[[NSUUID UUID] UUIDString]} ;
-    NSString *theDisplay = [[LuaSkin shared] toNSObjectAtIndex:1] ;
+    NSString *theDisplay = [skin toNSObjectAtIndex:1] ;
     BOOL isValid = isScreenUUIDValid(theDisplay) ;
 
     if (isValid) {
@@ -332,13 +360,15 @@ static int createSpace(lua_State *L) {
 }
 
 static int removeSpace(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TNUMBER, LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TNUMBER, LS_TBREAK] ;
     CGSSpaceDestroy(CGSDefaultConnection, (CGSSpaceID)luaL_checkinteger(L, 1)) ;
     return 0 ;
 }
 
 static int windowsAddTo(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TNUMBER | LS_TTABLE, LS_TNUMBER | LS_TTABLE, LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TNUMBER | LS_TTABLE, LS_TNUMBER | LS_TTABLE, LS_TBREAK] ;
     NSArray *theWindows = getArrayFromNumberOrArray(L, 1) ;
     NSArray *theSpaces  = getArrayFromNumberOrArray(L, 2) ;
     CGSAddWindowsToSpaces(CGSDefaultConnection, (__bridge CFArrayRef)theWindows, (__bridge CFArrayRef)theSpaces);
@@ -346,7 +376,8 @@ static int windowsAddTo(lua_State *L) {
 }
 
 static int windowsRemoveFrom(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TNUMBER | LS_TTABLE, LS_TNUMBER | LS_TTABLE, LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TNUMBER | LS_TTABLE, LS_TNUMBER | LS_TTABLE, LS_TBREAK] ;
     NSArray *theWindows = getArrayFromNumberOrArray(L, 1) ;
     NSArray *theSpaces  = getArrayFromNumberOrArray(L, 2) ;
     CGSRemoveWindowsFromSpaces(CGSDefaultConnection, (__bridge CFArrayRef)theWindows, (__bridge CFArrayRef)theSpaces);
@@ -354,15 +385,17 @@ static int windowsRemoveFrom(lua_State *L) {
 }
 
 static int windowsOnSpaces(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TNUMBER | LS_TTABLE, LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TNUMBER | LS_TTABLE, LS_TBREAK] ;
     NSArray *theWindows = getArrayFromNumberOrArray(L, 1) ;
     NSArray *results = (__bridge_transfer NSArray *)CGSCopySpacesForWindows(CGSDefaultConnection, kCGSAllSpacesMask, (__bridge CFArrayRef)theWindows) ;
-    [[LuaSkin shared] pushNSObject:results] ;
+    [skin pushNSObject:results] ;
     return 1 ;
 }
 
 static int spaceShape(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TNUMBER, LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TNUMBER, LS_TBREAK] ;
     CGSRegionRef theRegion = CGSSpaceCopyShape(CGSDefaultConnection, (CGSSpaceID)luaL_checkinteger(L, 1)) ;
     CGSRegionRefToLua(L, theRegion) ;
     if (theRegion) CGSReleaseRegion(theRegion) ;
@@ -370,7 +403,8 @@ static int spaceShape(lua_State *L) {
 }
 
 static int spaceManagedShape(lua_State *L) {
-    [[LuaSkin shared] checkArgs:LS_TNUMBER, LS_TBREAK] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TNUMBER, LS_TBREAK] ;
     CGSRegionRef theRegion = CGSSpaceCopyManagedShape(CGSDefaultConnection, (CGSSpaceID)luaL_checkinteger(L, 1)) ;
     CGSRegionRefToLua(L, theRegion) ;
     if (theRegion) CGSReleaseRegion(theRegion) ;
@@ -421,7 +455,8 @@ static luaL_Reg moduleLib[] = {
 };
 
 int luaopen_hs__asm_undocumented_spaces_internal(lua_State* L) {
-    refTable = [[LuaSkin shared] registerLibrary:moduleLib metaFunctions:nil] ;
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    refTable = [skin registerLibrary:moduleLib metaFunctions:nil] ;
 
     spacesMasksTable(L) ; lua_setfield(L, -2, "masks") ;
     spacesTypesTable(L) ; lua_setfield(L, -2, "types") ;

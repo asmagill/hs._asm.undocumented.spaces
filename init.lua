@@ -1,3 +1,6 @@
+if package.searchpath("hs._asm.coroutineshim", package.path) then
+    require"hs._asm.coroutineshim"
+end
 --- === hs._asm.undocumented.spaces ===
 ---
 --- These functions utilize private API's within the OS X internals, and are known to have unpredictable behavior under Mavericks and Yosemite when "Displays have separate Spaces" is checked under the Mission Control system preferences.

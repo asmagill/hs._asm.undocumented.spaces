@@ -8,15 +8,13 @@
     ],
     "Function" : [
       {
-        "parameters" : [
-
-        ],
+        "name" : "count",
         "stripped_doc" : [
           "LEGACY: The number of spaces you currently have.",
           ""
         ],
+        "def" : "hs._asm.undocumented.spaces.count() -> number",
         "doc" : "LEGACY: The number of spaces you currently have.\n\nNotes:\n * this function may go away in a future update\n\n * this functions is included for backwards compatibility.  It is not recommended because it worked by indexing the spaces ignoring that fullscreen applications are included in the list twice, and only worked with one monitor.  Use `hs._asm.undocumented.spaces.query` or `hs._asm.undocumented.spaces.spacesByScreenUUID`.",
-        "desc" : "LEGACY: The number of spaces you currently have.",
         "notes" : [
           " * this function may go away in a future update",
           "",
@@ -27,19 +25,19 @@
         "returns" : [
 
         ],
-        "def" : "hs._asm.undocumented.spaces.count() -> number",
-        "name" : "count"
-      },
-      {
+        "desc" : "LEGACY: The number of spaces you currently have.",
         "parameters" : [
 
-        ],
+        ]
+      },
+      {
+        "name" : "currentSpace",
         "stripped_doc" : [
           "LEGACY: The index of the space you're currently on, 1-indexed (as usual).",
           ""
         ],
+        "def" : "hs._asm.undocumented.spaces.currentSpace() -> number",
         "doc" : "LEGACY: The index of the space you're currently on, 1-indexed (as usual).\n\nNotes:\n * this function may go away in a future update\n\n * this functions is included for backwards compatibility.  It is not recommended because it worked by indexing the spaces, which can be rearranged by the operating system anyways.  Use `hs._asm.undocumented.spaces.query` or `hs._asm.undocumented.spaces.spacesByScreenUUID`.",
-        "desc" : "LEGACY: The index of the space you're currently on, 1-indexed (as usual).",
         "notes" : [
           " * this function may go away in a future update",
           "",
@@ -50,19 +48,19 @@
         "returns" : [
 
         ],
-        "def" : "hs._asm.undocumented.spaces.currentSpace() -> number",
-        "name" : "currentSpace"
-      },
-      {
+        "desc" : "LEGACY: The index of the space you're currently on, 1-indexed (as usual).",
         "parameters" : [
 
-        ],
+        ]
+      },
+      {
+        "name" : "moveToSpace",
         "stripped_doc" : [
           "LEGACY: Switches to the space at the given index, 1-indexed (as usual).",
           ""
         ],
+        "def" : "hs._asm.undocumented.spaces.moveToSpace(number)",
         "doc" : "LEGACY: Switches to the space at the given index, 1-indexed (as usual).\n\nNotes:\n * this function may go away in a future update\n\n * this functions is included for backwards compatibility.  It is not recommended because it was never really reliable and worked by indexing the spaces, which can be rearranged by the operating system anyways.  Use `hs._asm.undocumented.spaces.changeToSpace`.",
-        "desc" : "LEGACY: Switches to the space at the given index, 1-indexed (as usual).",
         "notes" : [
           " * this function may go away in a future update",
           "",
@@ -73,20 +71,19 @@
         "returns" : [
 
         ],
-        "def" : "hs._asm.undocumented.spaces.moveToSpace(number)",
-        "name" : "moveToSpace"
+        "desc" : "LEGACY: Switches to the space at the given index, 1-indexed (as usual).",
+        "parameters" : [
+
+        ]
       },
       {
-        "parameters" : [
-          " * screen - an optional hs.screen object specifying the specific monitor to check the animation status for.",
-          ""
-        ],
+        "name" : "isAnimating",
         "stripped_doc" : [
           "Returns the state of space changing animation for the specified monitor, or for any monitor if no parameter is specified.",
           ""
         ],
+        "def" : "hs._asm.undocumented.spaces.isAnimating([screen]) -> bool",
         "doc" : "Returns the state of space changing animation for the specified monitor, or for any monitor if no parameter is specified.\n\nParameters:\n * screen - an optional hs.screen object specifying the specific monitor to check the animation status for.\n\nReturns:\n * a boolean value indicating whether or not a space changing animation is currently active.\n\nNotes:\n * This function can be used in `hs.eventtap` based space changing functions to determine when to release the mouse and key events.\n\n * This function is also added to the `hs.screen` object metatable so that you can check a specific screen's animation status with `hs.screen:spacesAnimating()`.",
-        "desc" : "Returns the state of space changing animation for the specified monitor, or for any monitor if no parameter is specified.",
         "notes" : [
           " * This function can be used in `hs.eventtap` based space changing functions to determine when to release the mouse and key events.",
           "",
@@ -98,20 +95,20 @@
           " * a boolean value indicating whether or not a space changing animation is currently active.",
           ""
         ],
-        "def" : "hs._asm.undocumented.spaces.isAnimating([screen]) -> bool",
-        "name" : "isAnimating"
+        "desc" : "Returns the state of space changing animation for the specified monitor, or for any monitor if no parameter is specified.",
+        "parameters" : [
+          " * screen - an optional hs.screen object specifying the specific monitor to check the animation status for.",
+          ""
+        ]
       },
       {
-        "parameters" : [
-          " * None",
-          ""
-        ],
+        "name" : "screensHaveSeparateSpaces",
         "stripped_doc" : [
           "Determine if the user has enabled the \"Displays Have Separate Spaces\" option within Mission Control.",
           ""
         ],
+        "def" : "hs._asm.undocumented.spaces.screensHaveSeparateSpaces() -> bool",
         "doc" : "Determine if the user has enabled the \"Displays Have Separate Spaces\" option within Mission Control.\n\nParameters:\n * None\n\nReturns:\n * true or false representing the status of the \"Displays Have Separate Spaces\" option within Mission Control.\n\nNotes:\n * This function uses standard OS X APIs and is not likely to be affected by updates or patches.",
-        "desc" : "Determine if the user has enabled the \"Displays Have Separate Spaces\" option within Mission Control.",
         "notes" : [
           " * This function uses standard OS X APIs and is not likely to be affected by updates or patches."
         ],
@@ -121,8 +118,11 @@
           " * true or false representing the status of the \"Displays Have Separate Spaces\" option within Mission Control.",
           ""
         ],
-        "def" : "hs._asm.undocumented.spaces.screensHaveSeparateSpaces() -> bool",
-        "name" : "screensHaveSeparateSpaces"
+        "desc" : "Determine if the user has enabled the \"Displays Have Separate Spaces\" option within Mission Control.",
+        "parameters" : [
+          " * None",
+          ""
+        ]
       }
     ],
     "Variable" : [
@@ -134,14 +134,12 @@
     "Deprecated" : [
 
     ],
-    "type" : "Module",
     "desc" : "These functions utilize private API's within the OS X internals, and are known to have unpredictable behavior under Mavericks and Yosemite when \"Displays have separate Spaces\" is checked under the Mission Control system preferences.",
+    "type" : "Module",
     "Constructor" : [
 
     ],
-    "Field" : [
-
-    ],
+    "doc" : "These functions utilize private API's within the OS X internals, and are known to have unpredictable behavior under Mavericks and Yosemite when \"Displays have separate Spaces\" is checked under the Mission Control system preferences.",
     "Method" : [
 
     ],
@@ -150,15 +148,13 @@
     ],
     "items" : [
       {
-        "parameters" : [
-
-        ],
+        "name" : "count",
         "stripped_doc" : [
           "LEGACY: The number of spaces you currently have.",
           ""
         ],
+        "def" : "hs._asm.undocumented.spaces.count() -> number",
         "doc" : "LEGACY: The number of spaces you currently have.\n\nNotes:\n * this function may go away in a future update\n\n * this functions is included for backwards compatibility.  It is not recommended because it worked by indexing the spaces ignoring that fullscreen applications are included in the list twice, and only worked with one monitor.  Use `hs._asm.undocumented.spaces.query` or `hs._asm.undocumented.spaces.spacesByScreenUUID`.",
-        "desc" : "LEGACY: The number of spaces you currently have.",
         "notes" : [
           " * this function may go away in a future update",
           "",
@@ -169,19 +165,19 @@
         "returns" : [
 
         ],
-        "def" : "hs._asm.undocumented.spaces.count() -> number",
-        "name" : "count"
-      },
-      {
+        "desc" : "LEGACY: The number of spaces you currently have.",
         "parameters" : [
 
-        ],
+        ]
+      },
+      {
+        "name" : "currentSpace",
         "stripped_doc" : [
           "LEGACY: The index of the space you're currently on, 1-indexed (as usual).",
           ""
         ],
+        "def" : "hs._asm.undocumented.spaces.currentSpace() -> number",
         "doc" : "LEGACY: The index of the space you're currently on, 1-indexed (as usual).\n\nNotes:\n * this function may go away in a future update\n\n * this functions is included for backwards compatibility.  It is not recommended because it worked by indexing the spaces, which can be rearranged by the operating system anyways.  Use `hs._asm.undocumented.spaces.query` or `hs._asm.undocumented.spaces.spacesByScreenUUID`.",
-        "desc" : "LEGACY: The index of the space you're currently on, 1-indexed (as usual).",
         "notes" : [
           " * this function may go away in a future update",
           "",
@@ -192,20 +188,19 @@
         "returns" : [
 
         ],
-        "def" : "hs._asm.undocumented.spaces.currentSpace() -> number",
-        "name" : "currentSpace"
+        "desc" : "LEGACY: The index of the space you're currently on, 1-indexed (as usual).",
+        "parameters" : [
+
+        ]
       },
       {
-        "parameters" : [
-          " * screen - an optional hs.screen object specifying the specific monitor to check the animation status for.",
-          ""
-        ],
+        "name" : "isAnimating",
         "stripped_doc" : [
           "Returns the state of space changing animation for the specified monitor, or for any monitor if no parameter is specified.",
           ""
         ],
+        "def" : "hs._asm.undocumented.spaces.isAnimating([screen]) -> bool",
         "doc" : "Returns the state of space changing animation for the specified monitor, or for any monitor if no parameter is specified.\n\nParameters:\n * screen - an optional hs.screen object specifying the specific monitor to check the animation status for.\n\nReturns:\n * a boolean value indicating whether or not a space changing animation is currently active.\n\nNotes:\n * This function can be used in `hs.eventtap` based space changing functions to determine when to release the mouse and key events.\n\n * This function is also added to the `hs.screen` object metatable so that you can check a specific screen's animation status with `hs.screen:spacesAnimating()`.",
-        "desc" : "Returns the state of space changing animation for the specified monitor, or for any monitor if no parameter is specified.",
         "notes" : [
           " * This function can be used in `hs.eventtap` based space changing functions to determine when to release the mouse and key events.",
           "",
@@ -217,19 +212,20 @@
           " * a boolean value indicating whether or not a space changing animation is currently active.",
           ""
         ],
-        "def" : "hs._asm.undocumented.spaces.isAnimating([screen]) -> bool",
-        "name" : "isAnimating"
+        "desc" : "Returns the state of space changing animation for the specified monitor, or for any monitor if no parameter is specified.",
+        "parameters" : [
+          " * screen - an optional hs.screen object specifying the specific monitor to check the animation status for.",
+          ""
+        ]
       },
       {
-        "parameters" : [
-
-        ],
+        "name" : "moveToSpace",
         "stripped_doc" : [
           "LEGACY: Switches to the space at the given index, 1-indexed (as usual).",
           ""
         ],
+        "def" : "hs._asm.undocumented.spaces.moveToSpace(number)",
         "doc" : "LEGACY: Switches to the space at the given index, 1-indexed (as usual).\n\nNotes:\n * this function may go away in a future update\n\n * this functions is included for backwards compatibility.  It is not recommended because it was never really reliable and worked by indexing the spaces, which can be rearranged by the operating system anyways.  Use `hs._asm.undocumented.spaces.changeToSpace`.",
-        "desc" : "LEGACY: Switches to the space at the given index, 1-indexed (as usual).",
         "notes" : [
           " * this function may go away in a future update",
           "",
@@ -240,20 +236,19 @@
         "returns" : [
 
         ],
-        "def" : "hs._asm.undocumented.spaces.moveToSpace(number)",
-        "name" : "moveToSpace"
+        "desc" : "LEGACY: Switches to the space at the given index, 1-indexed (as usual).",
+        "parameters" : [
+
+        ]
       },
       {
-        "parameters" : [
-          " * None",
-          ""
-        ],
+        "name" : "screensHaveSeparateSpaces",
         "stripped_doc" : [
           "Determine if the user has enabled the \"Displays Have Separate Spaces\" option within Mission Control.",
           ""
         ],
+        "def" : "hs._asm.undocumented.spaces.screensHaveSeparateSpaces() -> bool",
         "doc" : "Determine if the user has enabled the \"Displays Have Separate Spaces\" option within Mission Control.\n\nParameters:\n * None\n\nReturns:\n * true or false representing the status of the \"Displays Have Separate Spaces\" option within Mission Control.\n\nNotes:\n * This function uses standard OS X APIs and is not likely to be affected by updates or patches.",
-        "desc" : "Determine if the user has enabled the \"Displays Have Separate Spaces\" option within Mission Control.",
         "notes" : [
           " * This function uses standard OS X APIs and is not likely to be affected by updates or patches."
         ],
@@ -263,11 +258,17 @@
           " * true or false representing the status of the \"Displays Have Separate Spaces\" option within Mission Control.",
           ""
         ],
-        "def" : "hs._asm.undocumented.spaces.screensHaveSeparateSpaces() -> bool",
-        "name" : "screensHaveSeparateSpaces"
+        "desc" : "Determine if the user has enabled the \"Displays Have Separate Spaces\" option within Mission Control.",
+        "parameters" : [
+          " * None",
+          ""
+        ]
       }
     ],
-    "doc" : "These functions utilize private API's within the OS X internals, and are known to have unpredictable behavior under Mavericks and Yosemite when \"Displays have separate Spaces\" is checked under the Mission Control system preferences.",
+    "Field" : [
+
+    ],
     "name" : "hs._asm.undocumented.spaces"
   }
 ]
+Menu Developer Updated: Contents

@@ -60,7 +60,7 @@ install: verify install-objc install-lua
 	test -f docs.json && install -m 0644 docs.json $(PREFIX)/$(MODPATH)/$(MODULE) || echo "No docs.json file to install"
 
 verify: $(LUAFILE)
-	@if $$(hash lua-5.3 >& /dev/null); then (luac-5.3 -p $(LUAFILE) && echo "Lua Compile Verification Passed"); else echo "Skipping Lua Compile Verification"; fi
+	@if $$(hash lua >& /dev/null); then (luac -p $(LUAFILE) && echo "Lua Compile Verification Passed"); else echo "Skipping Lua Compile Verification"; fi
 
 install-objc: $(SOFILE)
 	mkdir -p $(PREFIX)/$(MODPATH)/$(MODULE)

@@ -9,6 +9,8 @@ I make no promises that these will work for you or work at all with any, past, c
 
 ### Installation
 
+*See https://github.com/asmagill/hammerspoon_asm/blob/master/README.md for details about building this module as a Universal library*
+
 Compiled versions of this module can be found in the releases.  You can download the release and install it by expanding it in your `~/.hammerspoon/` directory (or any other directory in your `package.path` and `package.cpath` search paths):
 
 ~~~sh

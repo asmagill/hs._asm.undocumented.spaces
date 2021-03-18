@@ -1,6 +1,11 @@
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 
+# Universal build info mostly from
+#     https://developer.apple.com/documentation/xcode/building_a_universal_macos_binary
+# Insight on Universal dSYM from
+#     https://lists.apple.com/archives/xcode-users/2009/Apr/msg00034.html
+
 MODULE := $(lastword $(subst ., ,$(current_dir)))
 PREFIX ?= ~/.hammerspoon
 MODPATH = hs/_asm/undocumented
@@ -41,9 +46,13 @@ ALLFILES += $(SOFILES)
 # CC=clang
 CC=@clang
 WARNINGS ?= -Weverything -Wno-objc-missing-property-synthesis -Wno-implicit-atomic-properties -Wno-direct-ivar-access -Wno-cstring-format-directive -Wno-padded -Wno-covered-switch-default -Wno-missing-prototypes -Werror-implicit-function-declaration -Wno-documentation-unknown-command -Wno-poison-system-directories
-EXTRA_CFLAGS ?= -F$(HS_APPLICATION)/Hammerspoon.app/Contents/Frameworks -mmacosx-version-min=10.13
+EXTRA_CFLAGS ?= -F$(HS_APPLICATION)/Hammerspoon.app/Contents/Frameworks -DSOURCE_PATH="$(mkfile_path)"
+MIN_intel_VERSION ?= -mmacosx-version-min=10.13
+MIN_arm64_VERSION ?= -mmacosx-version-min=11
 
 CFLAGS  += $(DEBUG_CFLAGS) -fmodules -fobjc-arc -DHS_EXTERNAL_MODULE $(WARNINGS) $(EXTRA_CFLAGS)
+release: CFLAGS  += -DRELEASE_VERSION=$(VERSION)
+releaseWithDocs: CFLAGS  += -DRELEASE_VERSION=$(VERSION)
 LDFLAGS += -dynamiclib -undefined dynamic_lookup $(EXTRA_LDFLAGS)
 
 all: verify $(shell uname -m)
@@ -58,19 +67,19 @@ universal: verify x86_64 arm64 $(SOFILES_univeral)
 #     (see also SOFILES above)
 
 obj_x86_64/%.so: %.m $(HEADERS)
-	$(CC) $< $(CFLAGS) $(LDFLAGS) -target x86_64-apple-macos10.13 -o $@
+	$(CC) $< $(CFLAGS) $(MIN_intel_VERSION) $(LDFLAGS) -target x86_64-apple-macos10.13 -o $@
 
 obj_arm64/%.so: %.m $(HEADERS)
-	$(CC) $< $(CFLAGS) $(LDFLAGS) -target arm64-apple-macos11 -o $@
+	$(CC) $< $(CFLAGS) $(MIN_arm64_VERSION) $(LDFLAGS) -target arm64-apple-macos11 -o $@
 
 # for compiling all source files into one library
 #     (see also SOFILES above)
 
 # obj_x86_64/%.so: $(OBJCFILES) $(HEADERS)
-# 	$(CC) $(OBJCFILES) $(CFLAGS) $(LDFLAGS) -target x86_64-apple-macos10.13 -o $@
+# 	$(CC) $(OBJCFILES) $(CFLAGS) $(MIN_intel_VERSION) $(LDFLAGS) -target x86_64-apple-macos10.13 -o $@
 #
 # obj_arm64/%.so: $(OBJCFILES) $(HEADERS)
-# 	$(CC) $(OBJCFILES) $(CFLAGS) $(LDFLAGS) -target arm64-apple-macos11 -o $@
+# 	$(CC) $(OBJCFILES) $(CFLAGS) $(MIN_arm64_VERSION) $(LDFLAGS) -target arm64-apple-macos11 -o $@
 
 # creating the universal dSYM bundle is a total hack because I haven't found a better
 # way yet... suggestions welcome

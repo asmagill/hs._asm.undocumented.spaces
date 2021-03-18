@@ -5,7 +5,7 @@
 extern CGSConnectionID _CGSDefaultConnection(void);
 #define CGSDefaultConnection _CGSDefaultConnection()
 
-static int refTable ;
+static LSRefTable refTable ;
 
 #pragma mark - Support Functions
 
@@ -456,7 +456,7 @@ static luaL_Reg moduleLib[] = {
 
 int luaopen_hs__asm_undocumented_spaces_internal(lua_State* L) {
     LuaSkin *skin = [LuaSkin sharedWithState:L] ;
-    refTable = [skin registerLibrary:moduleLib metaFunctions:nil] ;
+    refTable = [skin registerLibrary:"hs._asm.undocumented.spaces" functions:moduleLib metaFunctions:nil] ;
 
     spacesMasksTable(L) ; lua_setfield(L, -2, "masks") ;
     spacesTypesTable(L) ; lua_setfield(L, -2, "types") ;

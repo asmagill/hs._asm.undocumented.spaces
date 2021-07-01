@@ -178,7 +178,7 @@ Notes:
 ~~~lua
 spaces.query([mask], [flatten]) -> spacesIDArray
 ~~~
-Returns an array of screen IDs which match the provided mask.
+Returns an array of space IDs which match the provided mask.
 
 Parameters:
  * mask - a numeric mask from the flags in `hs._asm.undocumented.spaces.masks` indicating the spaces to return IDs for.  Defaults to `hs._asm.undocumented.spaces.masks.allSpaces`.

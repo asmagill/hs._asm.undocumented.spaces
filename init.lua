@@ -210,6 +210,13 @@ module.changeToSpace = function(...)
                 break
             end
         end
+
+        -- Tested on macOS Monterey 12.0.1
+        -- Trying to switch to the same space cause a screen blackout
+        if not resetDock and fromID == spaceID then
+            return
+        end
+
         if fromID == 0 then
             error("changeToSpace:unable to identify screen for space id "..spaceID, 2)
         end

@@ -23,15 +23,16 @@ LUAFILES  = ${wildcard *.lua}
 HEADERS   = ${wildcard *.h}
 
 # for compiling each source file into a separate library
-#     (see also obj_x86_64/%.s and obj_arm64/%.s below)
+#     (see also obj_x86_64/%.s, obj_arm64/%.s and obj_arm64e/%.s below)
 SOFILES  := $(OBJCFILES:.m=.so)
 
 # for compiling all source files into one library
-#     (see also obj_x86_64/%.s and obj_arm64/%.s below)
+#     (see also obj_x86_64/%.s, obj_arm64/%.s and obj_arm64e/%.s below)
 # SOFILES  := internal.so
 
 SOFILES_x86_64   := $(addprefix obj_x86_64/,$(SOFILES))
 SOFILES_arm64    := $(addprefix obj_arm64/,$(SOFILES))
+SOFILES_arm64e   := $(addprefix obj_arm64e/,$(SOFILES))
 SOFILES_univeral := $(addprefix obj_universal/,$(SOFILES))
 
 DEBUG_CFLAGS ?= -g
@@ -49,6 +50,7 @@ WARNINGS ?= -Weverything -Wno-objc-missing-property-synthesis -Wno-implicit-atom
 EXTRA_CFLAGS ?= -F$(HS_APPLICATION)/Hammerspoon.app/Contents/Frameworks -DSOURCE_PATH="$(mkfile_path)"
 MIN_intel_VERSION ?= -mmacosx-version-min=10.13
 MIN_arm64_VERSION ?= -mmacosx-version-min=11
+MIN_arm64e_VERSION ?= -mmacosx-version-min=11
 
 CFLAGS  += $(DEBUG_CFLAGS) -fmodules -fobjc-arc -DHS_EXTERNAL_MODULE $(WARNINGS) $(EXTRA_CFLAGS)
 release: CFLAGS  += -DRELEASE_VERSION=$(VERSION)
@@ -61,7 +63,9 @@ x86_64: $(SOFILES_x86_64)
 
 arm64: $(SOFILES_arm64)
 
-universal: verify x86_64 arm64 $(SOFILES_univeral)
+arm64e: $(SOFILES_arm64e)
+
+universal: verify x86_64 arm64 arm64e $(SOFILES_univeral)
 
 # for compiling each source file into a separate library
 #     (see also SOFILES above)
@@ -72,6 +76,9 @@ obj_x86_64/%.so: %.m $(HEADERS)
 obj_arm64/%.so: %.m $(HEADERS)
 	$(CC) $< $(CFLAGS) $(MIN_arm64_VERSION) $(LDFLAGS) -target arm64-apple-macos11 -o $@
 
+obj_arm64e/%.so: %.m $(HEADERS)
+	$(CC) $< $(CFLAGS) $(MIN_arm64e_VERSION) $(LDFLAGS) -target arm64e-apple-macos11 -o $@
+
 # for compiling all source files into one library
 #     (see also SOFILES above)
 
@@ -80,18 +87,23 @@ obj_arm64/%.so: %.m $(HEADERS)
 #
 # obj_arm64/%.so: $(OBJCFILES) $(HEADERS)
 # 	$(CC) $(OBJCFILES) $(CFLAGS) $(MIN_arm64_VERSION) $(LDFLAGS) -target arm64-apple-macos11 -o $@
+#
+# obj_arm64e/%.so: $(OBJCFILES) $(HEADERS)
+# 	$(CC) $(OBJCFILES) $(CFLAGS) $(MIN_arm64e_VERSION) $(LDFLAGS) -target arm64e-apple-macos11 -o $@
 
 # creating the universal dSYM bundle is a total hack because I haven't found a better
 # way yet... suggestions welcome
-obj_universal/%.so: $(SOFILES_x86_64) $(SOFILES_arm64)
-	lipo -create -output $@ $(subst universal/,x86_64/,$@) $(subst universal/,arm64/,$@)
+obj_universal/%.so: $(SOFILES_x86_64) $(SOFILES_arm64) $(SOFILES_arm64e)
+	lipo -create -output $@ $(subst universal/,x86_64/,$@) $(subst universal/,arm64/,$@) $(subst universal/,arm64e/,$@)
 	mkdir -p $@.dSYM/Contents/Resources/DWARF/
 	cp $(subst universal/,x86_64/,$@).dSYM/Contents/Info.plist $@.dSYM/Contents
-	lipo -create -output $@.dSYM/Contents/Resources/DWARF/$(subst obj_universal/,,$@) $(subst universal/,x86_64/,$@).dSYM/Contents/Resources/DWARF/$(subst obj_universal/,,$@) $(subst universal/,arm64/,$@).dSYM/Contents/Resources/DWARF/$(subst obj_universal/,,$@)
+	lipo -create -output $@.dSYM/Contents/Resources/DWARF/$(subst obj_universal/,,$@) $(subst universal/,x86_64/,$@).dSYM/Contents/Resources/DWARF/$(subst obj_universal/,,$@) $(subst universal/,arm64/,$@).dSYM/Contents/Resources/DWARF/$(subst obj_universal/,,$@) $(subst universal/,arm64e/,$@).dSYM/Contents/Resources/DWARF/$(subst obj_universal/,,$@)
 
 $(SOFILES_x86_64): | obj_x86_64
 
 $(SOFILES_arm64): | obj_arm64
+
+$(SOFILES_arm64e): | obj_arm64e
 
 $(SOFILES_univeral): | obj_universal
 
@@ -100,6 +112,9 @@ obj_x86_64:
 
 obj_arm64:
 	mkdir obj_arm64
+
+obj_arm64e:
+	mkdir obj_arm64e
 
 obj_universal:
 	mkdir obj_universal
@@ -124,6 +139,11 @@ install-arm64: verify install-lua $(SOFILES_arm64)
 	install -m 0644 $(SOFILES_arm64) $(PREFIX)/$(MODPATH)/$(MODULE)
 	cp -vpR $(SOFILES_arm64:.so=.so.dSYM) $(PREFIX)/$(MODPATH)/$(MODULE)
 
+install-arm64e: verify install-lua $(SOFILES_arm64e)
+	mkdir -p $(PREFIX)/$(MODPATH)/$(MODULE)
+	install -m 0644 $(SOFILES_arm64e) $(PREFIX)/$(MODPATH)/$(MODULE)
+	cp -vpR $(SOFILES_arm64e:.so=.so.dSYM) $(PREFIX)/$(MODPATH)/$(MODULE)
+
 install-universal: verify install-lua $(SOFILES_univeral)
 	mkdir -p $(PREFIX)/$(MODPATH)/$(MODULE)
 	install -m 0644 $(SOFILES_univeral) $(PREFIX)/$(MODPATH)/$(MODULE)
@@ -136,7 +156,7 @@ uninstall:
 	rmdir -p $(PREFIX)/$(MODPATH)/$(MODULE) ; exit 0
 
 clean:
-	rm -rf obj_x86_64 obj_arm64 obj_universal tmp docs.json
+	rm -rf obj_x86_64 obj_arm64 obj_arm64e obj_universal tmp docs.json
 
 docs:
 	hs -c "require(\"hs.doc\").builder.genJSON(\"$(dir $(mkfile_path))\")" > docs.json
@@ -153,4 +173,4 @@ release: clean all
 releaseWithDocs: clean all docs
 	HS_APPLICATION=$(HS_APPLICATION) PREFIX=tmp make install-universal ; cd tmp ; tar -cf ../$(MODULE)-v$(VERSION).tar hs ; cd .. ; gzip $(MODULE)-v$(VERSION).tar
 
-.PHONY: all clean verify install install-lua install-x86_64 install-arm64 install-universal docs markdown markdownWithTOC release releaseWithDocs
+.PHONY: all clean verify install install-lua install-x86_64 install-arm64 install-arm64e install-universal docs markdown markdownWithTOC release releaseWithDocs

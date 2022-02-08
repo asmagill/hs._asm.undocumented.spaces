@@ -366,6 +366,14 @@ static int removeSpace(lua_State *L) {
     return 0 ;
 }
 
+static int windowsMoveTo(lua_State *L) {
+    LuaSkin *skin = [LuaSkin sharedWithState:L] ;
+    [skin checkArgs:LS_TNUMBER | LS_TTABLE, LS_TNUMBER | LS_TTABLE, LS_TBREAK] ;
+    NSArray *theWindows = getArrayFromNumberOrArray(L, 1) ;
+    CGSMoveWindowsToManagedSpace(CGSDefaultConnection, (__bridge CFArrayRef)theWindows, (CGSSpaceID)lua_tointeger(L, 2));
+    return 0 ;
+}
+
 static int windowsAddTo(lua_State *L) {
     LuaSkin *skin = [LuaSkin sharedWithState:L] ;
     [skin checkArgs:LS_TNUMBER | LS_TTABLE, LS_TNUMBER | LS_TTABLE, LS_TBREAK] ;
@@ -448,6 +456,7 @@ static luaL_Reg moduleLib[] = {
     {"disableUpdates",            disableUpdates},
 
     {"windowsOnSpaces",           windowsOnSpaces},
+    {"windowsMoveTo",             windowsMoveTo},
     {"windowsAddTo",              windowsAddTo},
     {"windowsRemoveFrom",         windowsRemoveFrom},
 

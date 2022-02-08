@@ -416,8 +416,7 @@ module.moveWindowToSpace = function(...)
             error("moveWindowToSpace:window on multiple spaces", 2)
         end
         if currentSpaces[1] ~= spaceID then
-            internal.windowsAddTo(windowID, spaceID)
-            internal.windowsRemoveFrom(windowID, currentSpaces[1])
+            internal.windowsMoveTo(windowID, spaceID)
         end
         return internal.windowsOnSpaces(windowID)[1]
     else

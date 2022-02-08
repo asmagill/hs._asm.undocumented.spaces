@@ -134,6 +134,9 @@ CG_EXTERN void CGSShowSpaces(CGSConnectionID cid, CFArrayRef spaces);
 /// Given an array of space IDs, each space is hidden from the user.
 CG_EXTERN void CGSHideSpaces(CGSConnectionID cid, CFArrayRef spaces);
 
+/// Given an array of window numbers and a space ID, moves each window to the space.
+CG_EXTERN void CGSMoveWindowsToManagedSpace(CGSConnectionID cid, CFArrayRef windows, CGSSpaceID spaceId);
+
 /// Given an array of window numbers and an array of space IDs, adds each window to each space.
 CG_EXTERN void CGSAddWindowsToSpaces(CGSConnectionID cid, CFArrayRef windows, CFArrayRef spaces);
 

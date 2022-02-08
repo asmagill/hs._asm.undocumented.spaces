@@ -278,6 +278,13 @@ The `spaces.moveWindowToSpace` wraps this to allow you to specify only one space
 - - -
 
 ~~~lua
+spaces.raw.windowsMoveTo(windowID, spaceID) -> None
+~~~
+Moves the window(s) specified by the windowID (or table of windowIDs) onto the space specified by the spaceID.
+
+- - -
+
+~~~lua
 spaces.raw.windowsOnSpaces(windowID) -> table
 ~~~
 Returns an array of spaces on which any of the windowIDs specified are found on.  `windowID` can be a number or an array of windowIDs.  Note that a space which contains any of the specified windowIDs will be included... it is not possible to determine which windowID caused which spaceID to be included, which is why the wrapped version `spaces.windowOnSpaces` limits you to one windowID.

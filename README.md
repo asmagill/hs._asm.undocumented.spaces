@@ -1,6 +1,14 @@
 _asm.undocumented.spaces
 ========================
 
+** This module has been superseded by https://github.com/asmagill/hs._asm.spaces and is no longer being maintained. **
+
+It is being kept around for historical purposes, but is considered woefully out of date, buggy, likely broken and potentially dangerous to your health and/or sanity.
+
+If you find that the newer module still does not meet your requirements, then I suggest looking into https://github.com/koekeishiya/yabai which (at the time of this posting) is actively maintained and provides a lot more flexibility and functionality. A bridging Spoon between Yabai and Hammerspoon is being considered, but there is no ETA and you are encouraged to write one yourself if desired -- there are certainly Hammerspoon users who would be interested.
+
+- - -
+
 This module provides Hammerspoon with access to the undocumented Spaces API.  For backwards compatibility, it replicates the original legacy functions from the Hammerspoon precursors, [Hydra and Mjolnir](https://www.github.com/sdegutis)'s module of the same name, but also provides more direct access to the available functions.
 
 Most of the Spaces API detail in this module comes from [NUIKit/CGSInternal](https://github.com/NUIKit/CGSInternal) with a few changes made to include some functions found in previous incarnations of this module and other Google searches.
